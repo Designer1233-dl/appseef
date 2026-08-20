@@ -1,0 +1,124 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "borlegend",
+      "display_name": "Пухляк",
+      "balance": 428.4,
+      "in_game": 96,
+      "games_played": 35,
+      "wins": 7,
+      "volume": 5.44,
+      "is_admin": 1,
+      "vip_level": "Silver"
+    }
+  ],
+  "settings": {
+    "auto_deposit": "1",
+    "auto_withdraw": "1",
+    "risk_alerts": "3",
+    "vip_silver": "120",
+    "vip_gold": "44",
+    "freeze_queue": "1"
+  },
+  "activity": [
+    {
+      "id": 1,
+      "username": "storm.qq",
+      "action": "Создал депозит через CryptoBot на 85 USDT",
+      "tag": "02:03",
+      "created_at": "2026-08-20T01:18:30Z"
+    },
+    {
+      "id": 2,
+      "username": "nightdrop",
+      "action": "Выигрыш x50 и автозачисление 214 USDT",
+      "tag": "01:58",
+      "created_at": "2026-08-20T01:18:30Z"
+    },
+    {
+      "id": 3,
+      "username": "mika",
+      "action": "Попытка вывода с нового устройства",
+      "tag": "risk",
+      "created_at": "2026-08-20T01:18:30Z"
+    },
+    {
+      "id": 4,
+      "username": "borlegend",
+      "action": "Вошёл по ссылке в денежное колесо",
+      "tag": "01:44",
+      "created_at": "2026-08-20T01:18:30Z"
+    }
+  ],
+  "withdrawals": [
+    {
+      "id": 1,
+      "username": "shiro",
+      "amount": 125,
+      "status": "pending",
+      "risk_score": "clean",
+      "created_at": "2026-08-20T01:18:30Z"
+    },
+    {
+      "id": 2,
+      "username": "loki",
+      "amount": 52,
+      "status": "review",
+      "risk_score": "medium",
+      "created_at": "2026-08-20T01:18:30Z"
+    }
+  ],
+  "promos": [
+    {
+      "id": 1,
+      "code": "BORVIP",
+      "activation_limit": 30,
+      "activated_count": 8,
+      "deposit_required": 1,
+      "deposit_min": 25,
+      "expires_at": "2026-08-23T01:18:30Z",
+      "bonus_amount": 10,
+      "active": 1,
+      "created_at": "2026-08-20T01:18:30Z"
+    },
+    {
+      "id": 2,
+      "code": "GREENSPIN",
+      "activation_limit": 50,
+      "activated_count": 41,
+      "deposit_required": 0,
+      "deposit_min": 0,
+      "expires_at": "2026-08-21T01:18:30Z",
+      "bonus_amount": 5,
+      "active": 1,
+      "created_at": "2026-08-20T01:18:30Z"
+    }
+  ],
+  "wheels": [
+    {
+      "id": 1,
+      "slug": "wheel-bor-8902",
+      "title": "Weekly Money Wheel",
+      "prize_pool": 500,
+      "deposit_required": 0,
+      "required_deposit": 0,
+      "participants": 31,
+      "winners_count": 5,
+      "prize_per_winner": 100,
+      "ends_at": "2026-08-20T01:31:30Z",
+      "status": "scheduled",
+      "created_at": "2026-08-20T01:18:30Z"
+    }
+  ],
+  "wheel_entries": [],
+  "deposits": [],
+  "counters": {
+    "activity": 5,
+    "withdrawals": 3,
+    "promos": 3,
+    "wheels": 2,
+    "deposits": 1,
+    "wheel_entries": 1
+  }
+}
