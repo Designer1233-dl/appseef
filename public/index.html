@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070708">
+  <title>BOR — мини-приложение</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell" id="app">
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="admin-panel" id="adminPanel" aria-label="Панель администратора">
+      <div class="admin-topbar">
+        <div class="admin-title-wrap">
+          <div class="admin-logo">B</div>
+          <div>
+            <span class="overline">Управление BOR</span>
+            <h2>Панель администратора</h2>
+          </div>
+        </div>
+        <button class="round-button" id="closeAdmin" type="button" aria-label="Закрыть">×</button>
+      </div>
+
+      <div class="admin-summary">
+        <div class="admin-metric"><span>Пользователей</span><strong id="adminUsersCount">1</strong><small>зарегистрировано</small></div>
+        <div class="admin-metric"><span>Оборот</span><strong id="adminVolume">0.00</strong><small>USDT</small></div>
+        <div class="admin-metric"><span>На вывод</span><strong id="adminPending">0</strong><small>ожидают решения</small></div>
+        <div class="admin-metric"><span>Промокоды</span><strong id="adminPromosCount">0</strong><small>активных</small></div>
+      </div>
+
+      <div class="admin-tabs" role="tablist">
+        <button class="admin-tab active" data-admin-tab="overview" type="button">Обзор</button>
+        <button class="admin-tab" data-admin-tab="logs" type="button">Операции</button>
+        <button class="admin-tab" data-admin-tab="withdraws" type="button">Выводы</button>
+        <button class="admin-tab" data-admin-tab="promos" type="button">Промокоды</button>
+        <button class="admin-tab" data-admin-tab="settings" type="button">Настройки</button>
+      </div>
+
+      <div class="admin-content">
+        <section class="admin-section active" data-admin-section="overview">
+          <div class="admin-grid">
+            <article class="admin-card">
+              <div class="card-heading"><div><span class="overline">Пользователь</span><h3>Управление балансом</h3></div><span class="status-dot">Активен</span></div>
+              <div class="admin-user-row">
+                <div class="mini-avatar">B</div>
+                <div><strong id="adminUserName">Пользователь</strong><span id="adminUserHandle">@пользователь</span></div>
+                <b id="adminUserBalance">0.00 USDT</b>
+              </div>
+              <div class="admin-balance-form">
+                <input id="adminBalanceAmount" type="number" min="0.01" step="0.01" placeholder="Сумма, USDT">
+                <button class="admin-action positive" id="adminBalanceAdd" type="button">Начислить</button>
+                <button class="admin-action danger" id="adminBalanceRemove" type="button">Списать</button>
+              </div>
+              <p class="form-message" id="adminOverviewMessage"></p>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading"><div><span class="overline">Система</span><h3>Состояние сервисов</h3></div></div>
+              <div class="service-list">
+                <div><span><i class="service-light online"></i>Игровой сервер</span><strong>Работает</strong></div>
+                <div><span><i class="service-light" id="paymentLight"></i>Приём платежей</span><strong id="paymentStatus">Проверка</strong></div>
+                <div><span><i class="service-light online"></i>Хранилище данных</span><strong>Работает</strong></div>
+              </div>
+            </article>
+          </div>
+          <article class="admin-card">
+            <div class="card-heading"><div><span class="overline">Последние события</span><h3>Живая лента</h3></div><button class="text-button" data-open-admin-section="logs" type="button">Показать все</button></div>
+            <div class="activity-timeline" id="adminActivityPreview"></div>
+          </article>
+        </section>
+
+        <section class="admin-section" data-admin-section="logs">
+          <article class="admin-card">
+            <div class="card-heading"><div><span class="overline">Журнал</span><h3>Все операции</h3></div><button class="text-button" id="refreshAdmin" type="button">Обновить</button></div>
+            <div class="admin-list" id="activityLog"></div>
+          </article>
+        </section>
+
+        <section class="admin-section" data-admin-section="withdraws">
+          <article class="admin-card">
+            <div class="card-heading"><div><span class="overline">Финансы</span><h3>Заявки на вывод</h3></div><span class="status-dot attention" id="withdrawBadge">0 новых</span></div>
+            <div class="admin-list" id="withdrawalList"></div>
+          </article>
+        </section>
+
+        <section class="admin-section" data-admin-section="promos">
+          <div class="admin-grid promo-admin-grid">
+            <article class="admin-card">
+              <div class="card-heading"><div><span class="overline">Новый бонус</span><h3>Создать промокод</h3></div></div>
+              <div class="admin-form">
+                <label><span>Код</span><input id="promoCode" placeholder="BORSTART"></label>
+                <label><span>Бонус, USDT</span><input id="promoBonus" type="number" min="0" step="0.01" placeholder="10"></label>
+                <label><span>Лимит активаций</span><input id="promoLimit" type="number" min="1" step="1" placeholder="100"></label>
+                <label><span>Минимальный депозит</span><input id="promoDepositMin" type="number" min="0" step="0.01" placeholder="0"></label>
+                <label class="full"><span>Действует до</span><input id="promoExpiresAt" type="datetime-local"></label>
+                <label class="toggle-line full"><span><b>Требовать депозит</b><small>Промокод сработает после пополнения</small></span><input id="promoDepositRequired" type="checkbox"><i></i></label>
+                <button class="admin-primary full" id="createPromo" type="button">Создать промокод</button>
+              </div>
+              <p class="form-message" id="adminPromoMessage"></p>
+            </article>
+            <article class="admin-card">
+              <div class="card-heading"><div><span class="overline">Действующие</span><h3>Промокоды</h3></div></div>
+              <div class="admin-list" id="promoList"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" data-admin-section="settings">
+          <article class="admin-card settings-card">
+            <div class="card-heading"><div><span class="overline">Конфигурация</span><h3>Автоматизация и безопасность</h3></div></div>
+            <label class="toggle-line"><span><b>Автоматический вывод</b><small>Одобрять небольшие заявки автоматически</small></span><input id="settingAutoWithdraw" type="checkbox"><i></i></label>
+            <label class="toggle-line"><span><b>Предупреждения о рисках</b><small>Отмечать подозрительные операции</small></span><input id="settingRiskAlerts" type="checkbox"><i></i></label>
+            <label class="toggle-line"><span><b>Приостановить новые выводы</b><small>Новые заявки останутся в очереди</small></span><input id="settingFreezeQueue" type="checkbox"><i></i></label>
+            <button class="admin-primary" id="saveSettings" type="button">Сохранить настройки</button>
+            <p class="form-message" id="adminSettingsMessage"></p>
+          </article>
+        </section>
+      </div>
+    </aside>
+
+    <section class="sheet cashier-sheet" id="cashierSheet" aria-label="Касса">
+      <div class="sheet-handle"></div>
+      <div class="sheet-heading">
+        <div><span class="overline">Кошелёк BOR</span><h2>Пополнение и вывод</h2></div>
+        <button class="round-button" id="closeSheet" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div class="balance-hero">
+        <span>Доступный баланс</span>
+        <strong id="cashierBalance">0.00 <small>USDT</small></strong>
+        <p>Средства зачисляются только после подтверждённой оплаты счёта.</p>
+      </div>
+      <div class="cashier-tabs">
+        <button class="cashier-tab active" data-cashier-tab="deposit" type="button">Пополнить</button>
+        <button class="cashier-tab" data-cashier-tab="withdraw" type="button">Вывести</button>
+      </div>
+      <div class="cashier-pane active" data-cashier-pane="deposit">
+        <label class="input-label"><span>Сумма пополнения</span><div class="amount-input"><input id="depositAmount" type="number" min="0.2" step="0.01" value="10"><b>USDT</b></div></label>
+        <div class="quick-amounts"><button type="button" data-deposit-amount="0.2">0.2</button><button type="button" data-deposit-amount="1">1</button><button type="button" data-deposit-amount="10">10</button><button type="button" data-deposit-amount="25">25</button></div>
+        <button class="red-button wide" id="depositButton" type="button">Создать счёт</button>
+      </div>
+      <div class="cashier-pane" data-cashier-pane="withdraw">
+        <label class="input-label"><span>Сумма вывода</span><div class="amount-input"><input id="withdrawAmount" type="number" min="1" step="0.01" value="5"><b>USDT</b></div></label>
+        <button class="red-button wide" id="withdrawButton" type="button">Создать заявку</button>
+      </div>
+      <p class="cashier-note" id="invoiceHint"></p>
+      <p class="form-message visible" id="cashierResult"></p>
+      <div class="deposit-history" id="depositList"></div>
+    </section>
+
+    <main class="screen">
+      <header class="topbar">
+        <button class="brand" data-go-section="x50" type="button" aria-label="На главную">
+          <span class="brand-logo"><img src="/assets/bor-logo.jpg" alt="BOR"></span>
+          <span class="brand-word" id="brandTitle">BOR</span>
+        </button>
+        <div class="top-actions">
+          <button class="wallet-chip" id="openCashier" type="button">
+            <span class="wallet-plus">+</span><strong id="headerBalance">0.00</strong><span class="coin">T</span>
+          </button>
+          <button class="avatar-button" id="avatarButton" data-go-section="profile" type="button">B</button>
+          <button class="admin-trigger hidden" id="adminButton" type="button" aria-label="Открыть панель администратора">•••</button>
+        </div>
+      </header>
+
+      <section class="section active" data-section="x50">
+        <div class="page-title-row"><div><span class="overline">Быстрая игра</span><h1>X50</h1></div><span class="live-badge"><i></i> Игра доступна</span></div>
+
+        <article class="x50-board">
+          <div class="x50-glow"></div>
+          <div class="x50-window" id="rouletteWindow">
+            <div class="x50-track" id="rouletteWheel"></div>
+            <div class="x50-pointer"><i></i></div>
+          </div>
+          <div class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="round-state">
+            <strong id="rouletteCountdown">13.8</strong>
+            <span>до следующей игры</span>
+          </div>
+        </article>
+
+        <article class="bet-panel">
+          <div class="bet-panel-head"><span>Сумма ставки</span><span>USDT</span></div>
+          <div class="bet-main-row">
+            <button class="square-control" id="betMinus" type="button">−</button>
+            <input class="bet-value" id="rouletteBet" type="number" min="0.1" step="0.01" value="0.1">
+            <button class="square-control" id="betPlus" type="button">+</button>
+          </div>
+          <div class="bet-presets"><button data-bet-action="half" type="button">½</button><button data-bet-action="double" type="button">×2</button><button data-bet-action="max" type="button">МАКС</button></div>
+        </article>
+
+        <div class="multiplier-row" id="multiplierRow"></div>
+        <button class="red-button spin-button" id="spinButton" type="button"><span>Сделать ставку</span><i>→</i></button>
+        <div class="result-banner" id="rouletteResult">Выбери сумму и сделай ставку.</div>
+      </section>
+
+      <section class="section" data-section="lobby">
+        <div class="page-title-row lobby-heading"><div><span class="overline">Каталог</span><h1>Игры</h1></div><span class="live-badge"><i></i> Онлайн</span></div>
+        <div class="game-grid" id="gameGrid"></div>
+
+        <article class="mines-shell" id="minesGame">
+          <div class="mines-head">
+            <div><span class="overline">Игра</span><h2>Мины</h2></div>
+            <div class="potential"><span>Можно забрать</span><strong id="minesPotential">0.00 USDT</strong></div>
+          </div>
+          <div class="mines-progress" id="minesProgress"></div>
+          <div class="mines-grid" id="minesGrid"></div>
+          <div class="mines-controls">
+            <div class="mines-bet-box">
+              <span>Ставка</span>
+              <strong><input id="minesBet" type="number" min="0.1" step="0.01" value="0.1"><small>USDT</small></strong>
+              <div><button data-mines-bet="half" type="button">½</button><button data-mines-bet="double" type="button">×2</button><button data-mines-bet="max" type="button">МАКС</button></div>
+            </div>
+            <div class="mine-count-box">
+              <span>Количество мин</span>
+              <div class="mine-options"><button class="active" data-mine-count="3" type="button">3</button><button data-mine-count="5" type="button">5</button><button data-mine-count="10" type="button">10</button><button data-mine-count="24" type="button">24</button></div>
+              <input id="mineCount" type="hidden" value="3">
+            </div>
+          </div>
+          <div class="mines-actions">
+            <button class="red-button" id="startMines" type="button">Начать игру</button>
+            <button class="dark-button" id="cashoutMines" type="button">Забрать выигрыш</button>
+          </div>
+          <div class="mines-stats">
+            <span>Открыто: <b id="minesSafePicks">0</b></span>
+            <span>Множитель: <b id="minesMultiplier">×1.00</b></span>
+            <span>В игре: <b id="minesInGame">0.00 USDT</b></span>
+          </div>
+          <div class="result-banner" id="minesResult">Начни игру и открывай безопасные клетки.</div>
+        </article>
+
+        <article class="crash-shell" id="crashGame">
+          <div class="mines-head"><div><span class="overline">Игра</span><h2>Ракета</h2></div><div class="potential"><span>Текущий множитель</span><strong id="crashMultiplier">×1.00</strong></div></div>
+          <div class="crash-stage" id="crashStage"><div class="crash-stars"></div><div class="crash-rocket" id="crashRocket">↗</div><strong id="crashStatus">Готова к запуску</strong></div>
+          <div class="mines-controls"><div class="mines-bet-box"><span>Ставка</span><strong><input id="crashBet" type="number" min="0.1" step="0.01" value="0.1"><small>USDT</small></strong><div><button data-crash-bet="half" type="button">½</button><button data-crash-bet="double" type="button">×2</button><button data-crash-bet="max" type="button">МАКС</button></div></div></div>
+          <div class="mines-actions"><button class="red-button" id="startCrash" type="button">Запустить ракету</button><button class="dark-button" id="cashoutCrash" type="button" disabled>Забрать выигрыш</button></div>
+          <div class="result-banner" id="crashResult">Запусти ракету и забери выигрыш до остановки.</div>
+        </article>
+      </section>
+
+      <section class="section" data-section="profile">
+        <div class="page-title-row profile-page-title"><div><span class="overline">Личный кабинет</span><h1>Профиль</h1></div><button class="round-button hidden" id="profileAdminButton" type="button">⚙</button></div>
+
+        <article class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">B</div>
+          <div class="profile-identity">
+            <h2 id="profileName">Пользователь</h2>
+            <p id="profileUsername">@пользователь</p>
+            <span id="profileId">ID 1</span>
+          </div>
+          <div class="profile-level"><span>Уровень</span><strong id="vipBadge">Серебро</strong></div>
+        </article>
+
+        <article class="profile-balance-card">
+          <div class="profile-balance-top"><div><span>Баланс</span><strong id="profileBalance">0.00 <small>USDT</small></strong></div><p>В игре: <b id="profileInGame">0.00 USDT</b></p></div>
+          <div class="profile-money-actions"><button id="profileDeposit" type="button"><i>↓</i> Пополнить</button><button id="profileWithdraw" type="button"><i>↑</i> Вывести</button></div>
+        </article>
+
+        <div class="profile-stats">
+          <div><span>Игр</span><strong id="profileGamesPlayed">0</strong></div>
+          <div><span>Побед</span><strong id="profileWins">0</strong></div>
+          <div><span>Объём</span><strong id="profileVolume">0.00 <small>USDT</small></strong></div>
+        </div>
+
+        <div class="promo-row"><input id="promoActivateCode" placeholder="Промокод"><button id="activatePromo" type="button">Активировать</button></div>
+
+        <div class="profile-menu">
+          <button type="button"><span class="menu-icon">♧</span><span><b>Реферальная программа</b><small>Приглашай друзей и получай награды</small></span><i>›</i></button>
+          <a href="https://t.me/" target="_blank" rel="noreferrer"><span class="menu-icon">?</span><span><b>Поддержка</b><small>Написать нам в Telegram</small></span><i>›</i></a>
+          <button id="openAdminFromMenu" class="admin-menu-item hidden" type="button"><span class="menu-icon">⚙</span><span><b>Панель администратора</b><small>Управление проектом BOR</small></span><i>›</i></button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Главное меню">
+      <button class="tab active" data-tab="x50" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><circle cx="24" cy="24" r="10"></circle><circle cx="24" cy="24" r="3"></circle><path d="M24 7v7M24 34v7M7 24h7M34 24h7M12 12l5 5M31 31l5 5M36 12l-5 5M17 31l-5 5"></path></svg></span><span>X50</span></button>
+      <button class="tab" data-tab="lobby" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><path d="M8 38V26M17 38V20M26 38V24M35 38V12"></path><path d="M7 17l9-8 9 5 13-10"></path><path d="M31 4h7v7"></path></svg></span><span>Игры</span></button>
+      <button class="tab" data-tab="profile" type="button"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><circle cx="24" cy="14" r="8.5"></circle><path d="M8 42c1.8-8.8 8.1-13.2 16-13.2S38.2 33.2 40 42"></path></svg></span><span>Профиль</span></button>
+    </nav>
+    <section class="bonus-modal" id="bonusModal" aria-hidden="true" aria-label="Бонус BOR">
+      <div class="bonus-modal-card">
+        <button class="round-button bonus-close" id="closeBonus" type="button" aria-label="Закрыть">×</button>
+        <div class="bonus-emblem">B</div>
+        <span class="overline">Бонусный раунд</span>
+        <h2>Выбери карту BOR</h2>
+        <p>Ставка раунда: <b id="bonusBet">0.00 USDT</b></p>
+        <div class="bonus-cards" id="bonusCards"></div>
+        <small class="bonus-hint">Три карты дают x2. Остальные карты дают от x3 до x15.</small>
+      </div>
+    </section>
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
